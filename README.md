@@ -32,19 +32,19 @@ npm start
 ```bash
 npm link
 cd example
-npm link ngx-color-picker
+npm link @livereach/ngx-color-picker
 ```
 
 ### Installing and usage
 
 ```bash
-npm install ngx-color-picker --save
+npm i @livereach/ngx-color-picker --save
 ```
 
 ##### Load the module for your app:
 
 ```javascript
-import { ColorPickerModule } from 'ngx-color-picker';
+import { ColorPickerModule } from '@livereach/ngx-color-picker';
 
 @NgModule({
   ...
@@ -78,6 +78,8 @@ import { ColorPickerModule } from 'ngx-color-picker';
 [cpAlphaChannel]             // Alpha mode: 'enabled', 'disabled', 'always', 'forced' ('enabled').
 
 [cpFallbackColor]            // Used when the color is not well-formed or is undefined ('#000').
+
+[cpTemplateColors]           // The templates color to show in the color picker dialog.
 
 [cpPosition]                 // Dialog position: 'right', 'left', 'top', 'bottom' ('right').
 [cpPositionOffset]           // Dialog offset percentage relative to the directive element (0%).
@@ -139,6 +141,8 @@ import { ColorPickerModule } from 'ngx-color-picker';
 (cpCmykColorChange)          // Outputs the color as CMYK string if CMYK is enabled (value: string).
 
 (cpPresetColorsChange)       // Preset colors, send when 'Add Color' button is pressed (value: array).
+
+(cpTemplateColorsChange)     // Changed template colors value, send when template colors are changed 
 ```
 
 ##### Available control / helper functions (provided by the directive):

@@ -1,4 +1,41 @@
-import { Directive, Input, Output, EventEmitter, HostListener, ElementRef } from '@angular/core';
+import { Directive, Input, Output, EventEmitter, HostListener, ElementRef, Pipe, PipeTransform } from '@angular/core';
+
+export interface Color {
+  color: string;
+}
+
+export interface TemplateColors {
+  solid?: Color[];
+  linear?: Color[];
+  radial?: Color[];
+}
+
+export interface Point extends Color {
+  end: number;
+}
+
+export interface Gradient {
+  deg?: number | null;
+  points: Point[];
+}
+
+export enum EditModeState {
+  DEFAULT,
+  EDIT,
+  EDITING
+}
+
+export enum Palette {
+  TEMPLATE_COLORS = 'Template colors',
+  LAST_USED = 'Last used'
+}
+
+export enum GradientType {
+  LINEAR = 'Linear',
+  RADIAL = 'Radial',
+  SOLID = 'Solid',
+  // IMAGE = 'Image',
+}
 
 export type ColorMode = 'color' | 'c' | '1' |
   'grayscale' | 'g' | '2' | 'presets' | 'p' | '3';
@@ -44,6 +81,15 @@ export class TextDirective {
 
       this.newValue.emit({ v: numeric, rg: this.rg });
     }
+  }
+}
+
+@Pipe({
+  name: 'enumToArray'
+})
+export class EnumToArrayPipe implements PipeTransform {
+  transform(data: Object) {
+    return Object.values(data);
   }
 }
 

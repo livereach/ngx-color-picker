@@ -5,7 +5,7 @@ import { Directive, OnChanges, OnDestroy, Input, Output, EventEmitter,
 import { ColorPickerService } from './color-picker.service';
 import { ColorPickerComponent } from './color-picker.component';
 
-import { AlphaChannel, ColorMode, OutputFormat } from './helpers';
+import { AlphaChannel, ColorMode, OutputFormat, TemplateColors } from './helpers';
 
 @Directive({
   selector: '[colorPicker]',
@@ -29,7 +29,7 @@ export class ColorPickerDirective implements OnChanges, OnDestroy {
 
   @Input() cpIgnoredElements: any = [];
 
-  @Input() cpFallbackColor: string = '';
+  @Input() cpFallbackColor: string = '#fff';
 
   @Input() cpColorMode: ColorMode = 'color';
 
@@ -71,6 +71,24 @@ export class ColorPickerDirective implements OnChanges, OnDestroy {
   @Input() cpAddColorButtonClass: string = 'cp-add-color-button-class';
 
   @Input() cpRemoveColorButtonClass: string = 'cp-remove-color-button-class';
+
+  @Input() cpTemplateColors: TemplateColors = {
+    linear: [
+      {color: 'linear-gradient(45deg, rgb(20, 177, 20) 9%, rgb(100, 100, 231) 79%)'},
+      {color: 'linear-gradient(90deg, rgb(78, 0, 168) 0%, rgb(231, 231, 231) 30%)'},
+    ],
+    radial: [
+      {color: 'radial-gradient(circle, rgba(200, 100, 0, 0.4) 40%, rgba(100, 100, 19, 0.2) 79%)'},
+      {color: 'radial-gradient(circle, rgba(200, 0, 100, 0.1) 10%, rgba(100, 0, 19, 0.95) 90%)'},
+    ],
+    solid: [
+      {color: 'rgba(6,82,253,0.5)'},
+      {color: 'rgb(153,159,173)'},
+      {color: 'rgb(255,243,133)'},
+    ],
+  };
+
+  @Output() cpTemplateColorsChange = new EventEmitter<any>(true);
 
   @Output() cpInputChange = new EventEmitter<any>(true);
 
@@ -138,6 +156,12 @@ export class ColorPickerDirective implements OnChanges, OnDestroy {
       this.ignoreChanges = false;
     }
 
+    if (changes.cpTemplateColors) {
+      if (this.dialog) {
+        this.dialog.setTemplateColors(this.cpTemplateColors);
+      }
+    }
+
     if (changes.cpPresetLabel || changes.cpPresetColors) {
       if (this.dialog) {
         this.dialog.setPresetConfig(this.cpPresetLabel, this.cpPresetColors);
@@ -169,17 +193,16 @@ export class ColorPickerDirective implements OnChanges, OnDestroy {
 
       this.cmpRef = vcRef.createComponent(compFactory, 0, injector, []);
 
-      this.cmpRef.instance.setupDialog(this, this.elRef, this.colorPicker,
-        this.cpWidth, this.cpHeight, this.cpDialogDisplay, this.cpFallbackColor, this.cpColorMode,
-        this.cpCmykEnabled, this.cpAlphaChannel, this.cpOutputFormat, this.cpDisableInput,
-        this.cpIgnoredElements, this.cpSaveClickOutside, this.cpCloseClickOutside,
-        this.cpUseRootViewContainer, this.cpPosition, this.cpPositionOffset,
+      this.cmpRef.instance.setupDialog(this, this.elRef, this.colorPicker, this.cpWidth, this.cpHeight,
+        this.cpDialogDisplay, this.cpFallbackColor, this.cpColorMode, this.cpCmykEnabled, this.cpAlphaChannel,
+        this.cpOutputFormat, this.cpDisableInput, this.cpIgnoredElements, this.cpSaveClickOutside,
+        this.cpCloseClickOutside, this.cpUseRootViewContainer, this.cpPosition, this.cpPositionOffset,
         this.cpPositionRelativeToArrow, this.cpPresetLabel, this.cpPresetColors,
         this.cpMaxPresetColorsLength, this.cpPresetEmptyMessage, this.cpPresetEmptyMessageClass,
         this.cpOKButton, this.cpOKButtonClass, this.cpOKButtonText,
         this.cpCancelButton, this.cpCancelButtonClass, this.cpCancelButtonText,
         this.cpAddColorButton, this.cpAddColorButtonClass, this.cpAddColorButtonText,
-        this.cpRemoveColorButtonClass);
+        this.cpRemoveColorButtonClass, this.cpTemplateColors);
 
       this.dialog = this.cmpRef.instance;
 
@@ -269,5 +292,9 @@ export class ColorPickerDirective implements OnChanges, OnDestroy {
 
   public presetColorsChanged(value: any[]): void {
     this.cpPresetColorsChange.emit(value);
+  }
+
+  public templateColorsChanged(value: any[]): void {
+    this.cpTemplateColorsChange.emit(value);
   }
 }
